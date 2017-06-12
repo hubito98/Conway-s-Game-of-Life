@@ -70,9 +70,10 @@ public class ConwayPanel extends JPanel{
 	}
 	
 	public void initComboBox() {
-		String[] items = {"Choose structure", "Fountain", "Triple Fountain", "Pulsar",
+		String[] items = {"Select", "Fountain", "Triple Fountain", "Pulsar",
 				"Gospel glider gun"};
 		structureChooser = new JComboBox<>(items);
+		structureChooser.setToolTipText("Select structure to draw on area");
 		structureChooser.addItemListener(new ItemListener() {
 			
 			@Override
@@ -141,10 +142,12 @@ public class ConwayPanel extends JPanel{
 		if(running) {
 			running = false;
 			startStopButton.setText("Start");
+			speedSlider.setEnabled(true);
 		} 
 		else {
 			running = true;
 			startStopButton.setText("Stop");
+			speedSlider.setEnabled(false);
 		}
 	}
 	
@@ -153,6 +156,7 @@ public class ConwayPanel extends JPanel{
 		resetTiles();
 		startStopButton.setText("Start");
 		structureChooser.setSelectedIndex(0);
+		speedSlider.setEnabled(true);
 	}
 	
 	public void resetTiles() {
@@ -164,11 +168,20 @@ public class ConwayPanel extends JPanel{
 	}
 	
 	public void initSlider() {
-		speedSlider = new JSlider(SwingConstants.HORIZONTAL, 200, 800, 500);
+		speedSlider = new JSlider(SwingConstants.HORIZONTAL, 100, 900, 500);
 		speedSlider.setPaintTicks(true);
 		speedSlider.setPaintLabels(true);
-		speedSlider.setMajorTickSpacing(300);
+		speedSlider.setMajorTickSpacing(400);
 		speedSlider.setMinorTickSpacing(50);
+		speedSlider.setSnapToTicks(true);
+		speedSlider.setToolTipText("Select delay in milisecs between cycles (enabled when app stoped)");
+		speedSlider.addChangeListener(new ChangeListener() {
+			
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				changesSpeed = speedSlider.getValue();
+			}
+		});
 		
 		changesSpeed = speedSlider.getValue();
 		
@@ -324,7 +337,6 @@ public void changeTiles() {
 		}
 		
 		if(running) {
-			changesSpeed = speedSlider.getValue();
 			try{
 				Thread.sleep(changesSpeed - (System.currentTimeMillis() - currentTime));
 			}catch(Exception e) {
