@@ -16,6 +16,10 @@ import java.util.LinkedList;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 /**
  * 
@@ -31,6 +35,8 @@ public class ConwayPanel extends JPanel{
 	private Drawer drawer;
 	private JComboBox<String> structureChooser;
 	private JButton startStopButton, restartButton;
+	private JSlider speedSlider;
+	private int changesSpeed;
 	private MouseInput mouseInput;
 	private boolean running = false;
 	
@@ -44,6 +50,7 @@ public class ConwayPanel extends JPanel{
 		drawer = new Drawer(tiles, tilesInRow);
 		initComboBox();
 		initButtons();
+		initSlider();
 		initMouseInput();
 	}
 
@@ -154,6 +161,18 @@ public class ConwayPanel extends JPanel{
 			tiles.get(i).setAlive(false);
 		}
 		repaint();
+	}
+	
+	public void initSlider() {
+		speedSlider = new JSlider(SwingConstants.HORIZONTAL, 200, 800, 500);
+		speedSlider.setPaintTicks(true);
+		speedSlider.setPaintLabels(true);
+		speedSlider.setMajorTickSpacing(300);
+		speedSlider.setMinorTickSpacing(50);
+		
+		changesSpeed = speedSlider.getValue();
+		
+		add(speedSlider);
 	}
 	
 	public void initMouseInput() {
@@ -305,10 +324,11 @@ public void changeTiles() {
 		}
 		
 		if(running) {
+			changesSpeed = speedSlider.getValue();
 			try{
-				Thread.sleep(200 - (System.currentTimeMillis() - currentTime));
+				Thread.sleep(changesSpeed - (System.currentTimeMillis() - currentTime));
 			}catch(Exception e) {
-				e.printStackTrace();
+				System.out.println("Obliczenia trwały dłużej niż " + changesSpeed + " milisekund");
 			}
 		}
 	}
